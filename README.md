@@ -56,7 +56,7 @@ yum update
 
 ##常用快捷键
 
-mvn命令:mvn '-Dmybatis.generator.overwrite=true' mybatis-generator:generate
+mvn命令:mvn '-Dmybatis.generator.overwrite=true' mybatis-generator:generate\
 查看方法参数:ctrl+p\
 跳转到方法使用处:ctrl+B \
 查看方法具体实现:ctrl+alt+B\
