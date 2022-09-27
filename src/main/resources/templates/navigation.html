@@ -47,7 +47,10 @@
                     </li>
                     <!--判断session中是否有user-->
                     <li th:if="${session.user==null}">
-                        <a href="https://github.com/login/oauth/authorize?client_id=84e956f4ba0c5dec2948&redirect_uri=http://localhost:8080/callback&scope=user&state=1">登录</a>
+                        <!-- 此处引用环境配置的跳转地址-->
+                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='84e956f4ba0c5dec2948',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('githubRedirectUri')},
+                        scope='user',state=1)}"}
+                        >登录</a>
                     </li>
                 </ul>
             </div>

@@ -1,10 +1,12 @@
 package com.friday.peanutbutter;
 
+import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+//@EnableEncryptableProperties
 //除了使用mapper注解，springboot扫描mybatis生成的mapper使用@MapperScan注解,并在application.properties中设置路径
 @MapperScan("com.friday.peanutbutter.mapper")
 public class PeanutbutterApplication {
@@ -13,5 +15,6 @@ public class PeanutbutterApplication {
     public static void main(String[] args) {
         SpringApplication.run(PeanutbutterApplication.class, args);
     }
+
 
 }

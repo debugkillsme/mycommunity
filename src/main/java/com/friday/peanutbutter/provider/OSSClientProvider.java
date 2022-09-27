@@ -2,18 +2,13 @@ package com.friday.peanutbutter.provider;
 
 import com.aliyun.oss.*;
 import com.aliyun.oss.model.GeneratePresignedUrlRequest;
-import com.aliyun.oss.model.GetObjectRequest;
 import com.aliyun.oss.model.OSSObject;
 import com.friday.peanutbutter.exception.CustomizeErrorCode;
 import com.friday.peanutbutter.exception.CustomizeException;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 import java.util.UUID;
@@ -33,29 +28,29 @@ public class OSSClientProvider {
     @Value("${OSSClient.bucketName}")
     private String bucketName;
 
-    public String upload(FileInputStream filePath,String fileName){
+    public String upload(FileInputStream filePath, String fileName) {
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         String generatedFileName = null;
         String[] filePaths = fileName.split("\\.");
-        if(filePaths.length>1){
-            generatedFileName = UUID.randomUUID().toString()+"."+filePaths[filePaths.length-1];
+        if (filePaths.length > 1) {
+            generatedFileName = UUID.randomUUID().toString() + "." + filePaths[filePaths.length - 1];
         }
         try {
             // 创建PutObject请求,上传图片
             ossClient.putObject(bucketName, generatedFileName, filePath);
 
             //获得预览图片的链接
-            GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName,generatedFileName, HttpMethod.GET);
+            GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, generatedFileName, HttpMethod.GET);
             //设置过期时间
-            Date date = new Date(System.currentTimeMillis()+(long)Math.pow(10,10));
+            Date date = new Date(System.currentTimeMillis() + (long) Math.pow(10, 10));
             urlRequest.setExpiration(date);
             //获取图片链接
             URL url = ossClient.generatePresignedUrl(urlRequest);
-            if(url!=null){
+            if (url != null) {
                 ossClient.shutdown();
                 return url.toString();
-            }else {
+            } else {
                 //获取图片失败
                 throw new CustomizeException(CustomizeErrorCode.FILE_UPLOAD_FAILED);
             }
@@ -79,8 +74,6 @@ public class OSSClientProvider {
         }
         //但是图片链接过一段时间就会过期
         OSSObject ossObject = ossClient.getObject(bucketName, generatedFileName);
-
-
         // 关闭OSSClient。
         ossClient.shutdown();
         return "";
