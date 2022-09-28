@@ -7,9 +7,9 @@
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/public?serverTimezone=GMT"
-                        userId="root"
-                        password="123456">
+                        connectionURL="${spring.datasource.url}"
+                        userId="${spring.datasource.username}"
+                        password="${spring.datasource.password}">
             <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>
 
@@ -30,9 +30,9 @@
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
 
-<!--        <table tableName="user" domainObjectName="User" ></table>-->
-<!--        <table tableName="thread" domainObjectName="PostThread"  mapperName="ThreadMapper"></table>-->
-<!--        <table tableName="comment" domainObjectName="Comment" ></table>-->
+        <table tableName="user" domainObjectName="User" ></table>
+        <table tableName="thread" domainObjectName="PostThread"  mapperName="ThreadMapper"></table>
+        <table tableName="comment" domainObjectName="Comment" ></table>
         <table tableName="notification" domainObjectName="Notification" ></table>
 
 

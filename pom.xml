@@ -13,9 +13,13 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>peanutbutter</name>
     <description>peanutbutter</description>
+
     <properties>
         <java.version>1.8</java.version>
     </properties>
+    <profiles>
+
+    </profiles>
     <dependencies>
 
 
