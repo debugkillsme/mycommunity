@@ -41,7 +41,7 @@ public class PublishController {
         model.addAttribute("id",postThread.getId());
         model.addAttribute("tags",TagCache.get());
 
-        return "/publish";
+        return "publish";
     }
 
     //如果是Get方法，则进行页面渲染
