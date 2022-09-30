@@ -26,7 +26,7 @@ public class UserService {
             userMapper.insert(user);
         }else{
             //数据库中有相同账号，对数据库中内容进行更新
-            User dbuser = users.get(0);
+            User dbUser = users.get(0);
 
             User updateUser = new User();
             updateUser.setAvatarUrl(user.getAvatarUrl());
@@ -36,7 +36,7 @@ public class UserService {
             //更新token
             updateUser.setToken(user.getToken());
             UserExample example = new UserExample();
-            example.createCriteria().andIdEqualTo(dbuser.getId());
+            example.createCriteria().andIdEqualTo(dbUser.getId());
             //使用updateUser更新example
             userMapper.updateByExampleSelective(updateUser,example);
         }

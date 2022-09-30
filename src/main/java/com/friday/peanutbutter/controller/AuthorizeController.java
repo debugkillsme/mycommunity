@@ -58,8 +58,9 @@ public class AuthorizeController {
             //登录生成token(16位数字组成的唯一ID),绑定User识别是否已经存在
             String token = UUID.randomUUID().toString();
             user.setToken(token);
+            //设置登录用户类型
+            user.setAccountType("github");
             user.setName(githubUser.getName());
-            //除了github可能支持其他平台
             //如果当前登录的用户的id等于user的accountId,则到数据库中更新user的token
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setAvatarUrl(githubUser.getAvatarUrl());
@@ -72,6 +73,7 @@ public class AuthorizeController {
         //重定向回到初始页面
         return "redirect:/";
     }
+
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request,HttpServletResponse response){

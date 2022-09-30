@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>花生酱社区</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/bootstrap-3.4.1-dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/bootstrap-3.4.1-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/community.css">
+    <!--放在bootstrap.js上方-->
+    <script src="js/jquery-3.6.0.js"></script>
+    <script src="/bootstrap-3.4.1-dist/js/bootstrap.js"></script>
+</head>
+
+
+<body>
+<form action="/sendCode" method="post">
+    <label for="email">邮箱</label>
+    <div class="input-group">
+        <input type="text" class="form-control" id="email" th:value="${email}" name="email"
+               aria-label="email@example.com">
+        <span class="input-group-btn">
+             <button type="submit" class="btn btn-default">获取验证码</button>
+        </span>
+    </div>
+</form>
+<form action="/login" method="post">
+    <label for="code">输入验证码</label>
+    <input type="text" name="code" id="code" class="form-control" placeholder="输入验证码">
+    <button type="submit" class="btn btn-default">登录</button>
+</form>
+<div class="alert alert-danger" th:if="${error!=null}" th:text="${error}"></div>
+<div class="alert alert-success" th:if="${message}!=null" th:text="${message}"></div>
+</body>
+</html>

@@ -1,7 +1,6 @@
 package com.friday.peanutbutter.controller;
 
 import com.friday.peanutbutter.cache.TagCache;
-import com.friday.peanutbutter.dto.TagDTO;
 import com.friday.peanutbutter.mapper.ThreadMapper;
 import com.friday.peanutbutter.model.PostThread;
 import com.friday.peanutbutter.model.User;

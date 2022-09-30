@@ -29,7 +29,7 @@
                     <li th:if="${session.user!=null}">
                         <a href="/publish">发帖</a>
                     </li>
-                    <li>
+                    <li th:if="${session.user!=null}">
                         <a href="/profile/replies">通知<span class="badge" th:text="${session.unreadCount}"></span> </a>
                     </li>
                     <!-- 将登录按钮绑定到一个获得code的地址 -->
@@ -48,9 +48,28 @@
                     <!--判断session中是否有user-->
                     <li th:if="${session.user==null}">
                         <!-- 此处引用环境配置的跳转地址-->
-                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='84e956f4ba0c5dec2948',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('githubRedirectUri')},
-                        scope='user',state=1)}"}
-                        >登录</a>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                            登录
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">选择登录方式</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='84e956f4ba0c5dec2948',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('githubRedirectUri')},
+                                        scope='user',state=1)}"}>github登录</a>
+                                        <a href="/login">QQ邮箱登录</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </li>
                 </ul>
             </div>
