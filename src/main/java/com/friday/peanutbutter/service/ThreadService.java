@@ -1,6 +1,5 @@
 package com.friday.peanutbutter.service;
 
-import com.friday.peanutbutter.dto.PaginationDTO;
 import com.friday.peanutbutter.dto.ThreadDTO;
 import com.friday.peanutbutter.dto.ThreadQueryDTO;
 import com.friday.peanutbutter.exception.CustomizeErrorCode;
@@ -11,6 +10,8 @@ import com.friday.peanutbutter.mapper.UserMapper;
 import com.friday.peanutbutter.model.PostThread;
 import com.friday.peanutbutter.model.PostThreadExample;
 import com.friday.peanutbutter.model.User;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
@@ -34,9 +35,8 @@ public class ThreadService {
     @Autowired
     private UserMapper userMapper;
 
-    //这里大量重用可优化
-    public PaginationDTO list(String search,Integer page, Integer size) {
-        PaginationDTO<ThreadDTO> paginationDTO = new PaginationDTO();
+    //这里用PageHelper插件优化了一下
+    public PageInfo<ThreadDTO> list(String search, Integer page, Integer size) {
         if (StringUtils.isNotBlank(search)){
             String[] tags = StringUtils.split(search," ");
             search = Arrays.stream(tags).collect(Collectors.joining("|"));
@@ -46,81 +46,30 @@ public class ThreadService {
         //包括关键词的全局搜索
         ThreadQueryDTO threadQueryDTO = new ThreadQueryDTO();
         threadQueryDTO.setSearch(search);
-        Integer totalCount = threadExtMapper.countBySearch(threadQueryDTO);
-
-        if(totalCount==0) {return paginationDTO;}
-        if(totalCount%size==0){
-            paginationDTO.setTotalPage(totalCount/size);
-
-        }else{
-            paginationDTO.setTotalPage(totalCount/size+1);
-        }
-        //作容错处理，防止访问越界页面
-        if(page<1){
-            page=1;
-        }
-        if(page>paginationDTO.getTotalPage()){
-            //当totalpage为0的时候会出bug
-            page= paginationDTO.getTotalPage();
-        }
-        paginationDTO.setPagination(page);
-        //不同页数情况参数的设定
-        Integer offset = size*(page-1);
-        threadQueryDTO.setSize(size);
-        threadQueryDTO.setPage(offset);
         List<PostThread> postThreads = threadExtMapper.selectBySearch(threadQueryDTO);
-        List<ThreadDTO> threadDTOList = new ArrayList<>();
+        List<ThreadDTO> threadDTOList = getDTOList(postThreads);
 
-        for(PostThread postThread :postThreads){
-            //根据帖子的creator属性找到对应User的头像
-            User user = userMapper.selectByPrimaryKey(postThread.getCreator());
-            //转换成ThreadDTO
-            ThreadDTO threadDTO = new ThreadDTO();
-            //使用该工具类快速构造
-            BeanUtils.copyProperties(postThread,threadDTO);
-            threadDTO.setUser(user);
-            threadDTOList.add(threadDTO);
-        }
-        paginationDTO.setData(threadDTOList);
 
-        return paginationDTO;
+        PageHelper.startPage(page,size);
+        PageInfo<ThreadDTO> threadDTOPageInfo = new PageInfo<>(threadDTOList);
+
+        return threadDTOPageInfo;
     }
 
-    public PaginationDTO list(Long userId,Integer page, Integer size) {
-        PaginationDTO paginationDTO = new PaginationDTO();
-
-        Integer totalPage;
-
+    public PageInfo<ThreadDTO> list(Long userId,Integer page, Integer size) {
         PostThreadExample postThreadExample = new PostThreadExample();
         postThreadExample.createCriteria()
                 .andCreatorEqualTo(userId);
-        Integer totalCount = (int) threadMapper.countByExample(postThreadExample);
 
-        if(totalCount==0)return paginationDTO;
-        if(totalCount%size==0){
-            paginationDTO.setTotalPage(totalCount/size);
+        List<PostThread> postThreads = threadMapper.selectByExample(postThreadExample);
+        List<ThreadDTO> threadDTOList = getDTOList(postThreads);
+        PageHelper.startPage(page,size);
+        PageInfo<ThreadDTO> threadDTOPageInfo = new PageInfo<>(threadDTOList);
+        return threadDTOPageInfo;
+    }
 
-        }else{
-            paginationDTO.setTotalPage(totalCount/size+1);
-        }
-        //作容错处理，防止访问越界页面
-        if(page<1){
-            page=1;
-        }
-        if(page>paginationDTO.getTotalPage()){
-            //当totalpage为0的时候会出bug
-            page= paginationDTO.getTotalPage();
-        }
-        paginationDTO.setPagination(page);
-
-        //size*(page-1)
-        Integer offset = size * (page - 1);
-        PostThreadExample example = new PostThreadExample();
-        example.createCriteria()
-                .andCreatorEqualTo(userId);
-        List<PostThread> postThreads = threadMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
+    private List<ThreadDTO> getDTOList(List<PostThread> postThreads) {
         List<ThreadDTO> threadDTOList = new ArrayList<>();
-
         for(PostThread postThread :postThreads){
             //根据帖子的creator属性找到对应User的头像
             User user = userMapper.selectByPrimaryKey(postThread.getCreator());
@@ -131,9 +80,8 @@ public class ThreadService {
             threadDTO.setUser(user);
             threadDTOList.add(threadDTO);
         }
-        paginationDTO.setData(threadDTOList);
 
-        return paginationDTO;
+        return  threadDTOList;
     }
 
     public ThreadDTO getById(Long id){

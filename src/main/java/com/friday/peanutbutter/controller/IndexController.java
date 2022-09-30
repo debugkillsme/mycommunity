@@ -1,8 +1,8 @@
 package com.friday.peanutbutter.controller;
 
-import com.friday.peanutbutter.dto.PaginationDTO;
-import com.friday.peanutbutter.model.User;
+import com.friday.peanutbutter.dto.ThreadDTO;
 import com.friday.peanutbutter.service.ThreadService;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +24,7 @@ public class IndexController {
 
 
         //根据search关键词展示页面
-        PaginationDTO pagination= threadService.list(search,page,size);
+        PageInfo<ThreadDTO> pagination= threadService.list(search,page,size);
         model.addAttribute("pagination",pagination);
         //把"search传入在翻页时保持search关键词结果
         model.addAttribute("search",search);
