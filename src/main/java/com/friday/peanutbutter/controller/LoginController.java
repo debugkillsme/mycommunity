@@ -3,7 +3,7 @@ package com.friday.peanutbutter.controller;
 import com.friday.peanutbutter.model.User;
 import com.friday.peanutbutter.service.MailService;
 import com.friday.peanutbutter.service.UserService;
-import com.sun.xml.internal.fastinfoset.stax.events.Util;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +33,7 @@ public class LoginController {
 
     @PostMapping("/sendCode")
     public String sendCode(@RequestParam("email")String email, HttpSession session, Model model) {
-        if (Util.isEmptyString(email)) {
+        if (StringUtils.isBlank(email)) {
             model.addAttribute("error", "请输入邮箱");
         } else if (!Pattern.matches("^(\\w+([-.][A-Za-z0-9]+)*){3,18}@\\w+([-.][A-Za-z0-9]+)*\\.\\w+([-.][A-Za-z0-9]+)*$", email)) {
             model.addAttribute("error", "输入邮箱格式不正确");
@@ -59,7 +59,7 @@ public class LoginController {
         String email = session.getAttribute("email").toString();
 
         //进行验证码的比对(页面提交的验证码和Session中保存的验证码比对)
-        if (!Util.isEmptyString(codeInSession) && codeInSession.equals(code)) {
+        if (!StringUtils.isBlank(codeInSession) && codeInSession.equals(code)) {
             //如果能够比对成功,说明登录成功
             User user = new User();
             //登录生成token(16位数字组成的唯一ID),绑定User识别是否已经存在
