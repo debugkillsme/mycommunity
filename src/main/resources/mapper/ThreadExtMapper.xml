@@ -36,24 +36,14 @@
         select  * from thread where id!=#{id} and tag regexp #{tag}
     </select>
 
-    <select id="countBySearch" parameterType="com.friday.peanutbutter.dto.ThreadQueryDTO" resultType="java.lang.Integer">
-        <!--以正则的方式匹配相关帖子 -->
-        select  count(*) from thread
-        <where>
-            <if test="search != null">
-                and title regexp #{search}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectBySearch" parameterType="com.friday.peanutbutter.dto.ThreadQueryDTO" resultMap="BaseResultMap">
+    <select id="selectBySearch" parameterType="String" resultMap="BaseResultMap">
         select * from thread
         <where>
             <if test="search != null">
                 and title regexp #{search}
             </if>
         </where>
-        order by gmt_create desc limit #{page},#{size}
+        order by gmt_create desc
     </select>
 
 </mapper>

@@ -1,6 +1,5 @@
 package com.friday.peanutbutter.mapper;
 
-import com.friday.peanutbutter.dto.ThreadQueryDTO;
 import com.friday.peanutbutter.model.PostThread;
 
 import java.util.List;
@@ -10,9 +9,6 @@ public interface ThreadExtMapper {
     int incView(PostThread record);
     int incCommentCount(PostThread record);
     List<PostThread> selectRelated(PostThread postThread);
-
-    Integer countBySearch(ThreadQueryDTO threadQueryDTO);
-
-    List<PostThread> selectBySearch(ThreadQueryDTO threadQueryDTO);
+    List<PostThread> selectBySearch(String search);
 
 }

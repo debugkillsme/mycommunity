@@ -1,7 +1,5 @@
 package com.friday.peanutbutter.service;
 
-import com.friday.peanutbutter.dto.ThreadDTO;
-import com.friday.peanutbutter.dto.ThreadQueryDTO;
 import com.friday.peanutbutter.exception.CustomizeErrorCode;
 import com.friday.peanutbutter.exception.CustomizeException;
 import com.friday.peanutbutter.mapper.ThreadExtMapper;
@@ -9,12 +7,9 @@ import com.friday.peanutbutter.mapper.ThreadMapper;
 import com.friday.peanutbutter.mapper.UserMapper;
 import com.friday.peanutbutter.model.PostThread;
 import com.friday.peanutbutter.model.PostThreadExample;
-import com.friday.peanutbutter.model.User;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +31,7 @@ public class ThreadService {
     private UserMapper userMapper;
 
     //这里用PageHelper插件优化了一下
-    public PageInfo<ThreadDTO> list(String search, Integer page, Integer size) {
+    public PageInfo<PostThread> list(String search, Integer page, Integer size) {
         if (StringUtils.isNotBlank(search)){
             String[] tags = StringUtils.split(search," ");
             search = Arrays.stream(tags).collect(Collectors.joining("|"));
@@ -44,58 +39,34 @@ public class ThreadService {
             search=null;
         }
         //包括关键词的全局搜索
-        ThreadQueryDTO threadQueryDTO = new ThreadQueryDTO();
-        threadQueryDTO.setSearch(search);
-        List<PostThread> postThreads = threadExtMapper.selectBySearch(threadQueryDTO);
-        List<ThreadDTO> threadDTOList = getDTOList(postThreads);
 
 
         PageHelper.startPage(page,size);
-        PageInfo<ThreadDTO> threadDTOPageInfo = new PageInfo<>(threadDTOList);
+        List<PostThread> postThreads = threadExtMapper.selectBySearch(search);
+        PageInfo<PostThread> postThreadPageInfo = new PageInfo<>(postThreads);
 
-        return threadDTOPageInfo;
+        return postThreadPageInfo;
     }
 
-    public PageInfo<ThreadDTO> list(Long userId,Integer page, Integer size) {
+    public PageInfo<PostThread> list(Long userId,Integer page, Integer size) {
         PostThreadExample postThreadExample = new PostThreadExample();
         postThreadExample.createCriteria()
                 .andCreatorEqualTo(userId);
 
-        List<PostThread> postThreads = threadMapper.selectByExample(postThreadExample);
-        List<ThreadDTO> threadDTOList = getDTOList(postThreads);
         PageHelper.startPage(page,size);
-        PageInfo<ThreadDTO> threadDTOPageInfo = new PageInfo<>(threadDTOList);
-        return threadDTOPageInfo;
+        List<PostThread> postThreads = threadMapper.selectByExample(postThreadExample);
+        PageInfo<PostThread> postThreadPageInfo = new PageInfo<>(postThreads);
+        return postThreadPageInfo;
     }
 
-    private List<ThreadDTO> getDTOList(List<PostThread> postThreads) {
-        List<ThreadDTO> threadDTOList = new ArrayList<>();
-        for(PostThread postThread :postThreads){
-            //根据帖子的creator属性找到对应User的头像
-            User user = userMapper.selectByPrimaryKey(postThread.getCreator());
-            //转换成ThreadDTO
-            ThreadDTO threadDTO = new ThreadDTO();
-            //使用该工具类快速构造
-            BeanUtils.copyProperties(postThread,threadDTO);
-            threadDTO.setUser(user);
-            threadDTOList.add(threadDTO);
-        }
-
-        return  threadDTOList;
-    }
-
-    public ThreadDTO getById(Long id){
+    public PostThread getById(Long id){
         PostThread postThread = threadMapper.selectByPrimaryKey(id);
         if(postThread == null){
             //使用枚举的方式
             throw new CustomizeException(CustomizeErrorCode.THREAD_NOT_FOUND);
         }
-        ThreadDTO threadDTO = new ThreadDTO();
-        BeanUtils.copyProperties(postThread,threadDTO);
-        User user = userMapper.selectByPrimaryKey(threadDTO.getCreator());
-        threadDTO.setUser(user);
 
-        return threadDTO;
+        return postThread;
 
     }
 
@@ -131,24 +102,19 @@ public class ThreadService {
         threadExtMapper.incView(postThread);
     }
     //根据标签找到相关的帖子
-    public List<ThreadDTO> selectRelated(ThreadDTO queryDTO) {
-        if(StringUtils.isBlank(queryDTO.getTag())){
+    public List<PostThread> selectRelated(PostThread curPostThread) {
+        if(StringUtils.isBlank(curPostThread.getTag())){
             return new ArrayList<>();
         }
-        String[] tags = StringUtils.split(queryDTO.getTag(),"/");
+        String[] tags = StringUtils.split(curPostThread.getTag(),"/");
         String regexpTag = Arrays.stream(tags).collect(Collectors.joining("|"));
         PostThread postThread = new PostThread();
-        postThread.setId(queryDTO.getId());
+        postThread.setId(postThread.getId());
         postThread.setTag(regexpTag);
 
         List<PostThread> postThreads = threadExtMapper.selectRelated(postThread);
-        //把找到的postthread映射到threadDTO
-        List<ThreadDTO> threadDTOS =postThreads.stream().map(q->{
-            ThreadDTO threadDTO = new ThreadDTO();
-            BeanUtils.copyProperties(q,threadDTO);
-            return threadDTO;
-        }).collect(Collectors.toList());
-        return threadDTOS;
+
+        return postThreads;
 
     }
 }

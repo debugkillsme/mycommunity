@@ -62,7 +62,8 @@
                                         <h4 class="modal-title" id="myModalLabel">选择登录方式</h4>
                                     </div>
                                     <div class="modal-body">
-                                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='84e956f4ba0c5dec2948',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('githubRedirectUri')},
+                                        <!--这里尽量避免硬编码-->
+                                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='84e956f4ba0c5dec2948',redirect_uri='http://localhost:8080/callback',
                                         scope='user',state=1)}"}>github登录</a>
                                         <a href="/login">QQ邮箱登录</a>
                                     </div>

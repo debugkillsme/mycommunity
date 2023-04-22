@@ -9,6 +9,7 @@ import com.friday.peanutbutter.mapper.NotificationMapper;
 import com.friday.peanutbutter.model.Notification;
 import com.friday.peanutbutter.model.NotificationExample;
 import com.friday.peanutbutter.model.User;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
@@ -32,7 +33,7 @@ public class NotificationService {
                 andReceiverEqualTo(userId);
         //按照降序排列将未读消息放在上面
         notificationExample.setOrderByClause("gmt_create desc");
-
+        PageHelper.startPage(page,size);
         List<Notification> notifications = notificationMapper.selectByExample(notificationExample);
 
 

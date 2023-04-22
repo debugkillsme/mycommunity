@@ -34,7 +34,7 @@
 
                 <h4 class="question-title"><span th:text="${postthread.title}"></span></h4>
                 <span class="text-desc">
-                作者:<span th:text="${postthread.user.name}"></span>
+                作者:<span th:text="${postthread.creatorName}"></span>
                 发布时间:<span th:text="${#dates.format(postthread.gmtCreate,'yyyy-MM-dd')}"></span>
                 阅读数:<span th:text="${postthread.viewCount}"></span>
                 </span>
@@ -156,12 +156,12 @@
                     <div class="media-left">
                         <a href="#">
                             <img class="media-object img-rounded"
-                                 th:src="${postthread.user.avatarUrl}">
+                                 th:src="${postthread.creatorAvatar}">
                         </a>
                     </div>
                     <div class="media-body">
                         <h5 class="media-heading">
-                            <span th:text="${postthread.user.name}"></span>
+                            <span th:text="${postthread.creatorName}"></span>
                         </h5>
                     </div>
                 </div>

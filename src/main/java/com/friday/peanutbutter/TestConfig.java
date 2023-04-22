@@ -37,20 +37,8 @@ public class TestConfig {
     @Test
     public void encryptPwd(){
         //生成密钥
-        String OssAK = stringEncryptor.encrypt(OSSAK);
-        String OssKey= stringEncryptor.encrypt(OSSKEY);
-        String GID = stringEncryptor.encrypt(githubID);
-        String GSec = stringEncryptor.encrypt(githubSec);
-        String DBroot = stringEncryptor.encrypt(DBname);
-        String DBSec = stringEncryptor.encrypt(dbSec);
-        String mail = stringEncryptor.encrypt(mailSec);
-        System.out.println("OSSAK="+OssAK);
-        System.out.println("OSSkey="+OssKey);
-        System.out.println("GitID="+GID);
-        System.out.println("GitSec="+GSec);
-        System.out.println("DBroot="+DBroot);
-        System.out.println("bdsec="+DBSec);
-        System.out.println("mailSec="+mail);
+        String gitHubSec = stringEncryptor.decrypt("");
+        System.out.println(gitHubSec);
     }
 
 

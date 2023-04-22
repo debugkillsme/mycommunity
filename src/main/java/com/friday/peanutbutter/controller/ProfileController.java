@@ -2,7 +2,7 @@ package com.friday.peanutbutter.controller;
 
 
 import com.friday.peanutbutter.dto.NotificationDTO;
-import com.friday.peanutbutter.dto.ThreadDTO;
+import com.friday.peanutbutter.model.PostThread;
 import com.friday.peanutbutter.model.User;
 import com.friday.peanutbutter.service.NotificationService;
 import com.friday.peanutbutter.service.ThreadService;
@@ -39,7 +39,7 @@ public class ProfileController {
         }
         if ("threads".equals(action)) {
             //前端路由选择,search内容为空
-            PageInfo<ThreadDTO> pagination= threadService.list(user.getId(), page,size);
+            PageInfo<PostThread> pagination= threadService.list(user.getId(), page,size);
             model.addAttribute("section", "threads");
             model.addAttribute("sectionName", "我的帖子");
             model.addAttribute("pagination",pagination);

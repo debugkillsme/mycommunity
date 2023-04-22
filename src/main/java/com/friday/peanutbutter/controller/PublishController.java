@@ -100,6 +100,10 @@ public class PublishController {
         postThread.setTag(tag);
         //creator表示user的id
         postThread.setCreator(user.getId());
+        //设置user的头像
+        postThread.setCreatorAvatar(user.getAvatarUrl());
+        //设置user名字
+        postThread.setCreatorName(user.getName());
         //id是可空的
         postThread.setId(id);
         threadService.createOrUpdate(postThread);
